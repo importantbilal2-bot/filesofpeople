@@ -3,6 +3,9 @@ const ADMIN_KEY = "classified_admin_session";
 const ADMIN_USER = "bilal";
 const ADMIN_PASS = "saadiboy";
 
+const allowedClassifications = ["public", "confidential", "restricted"];
+const allowedStatuses = ["pending", "approved"];
+
 const seedFiles = [
   {
     id: crypto.randomUUID(),
@@ -20,17 +23,50 @@ const seedFiles = [
   }
 ];
 
+function esc(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function normalizeFile(record) {
+  return {
+    id: String(record.id || crypto.randomUUID()).replace(/[^a-zA-Z0-9-]/g, ""),
+    title: String(record.title || "Untitled").trim(),
+    description: String(record.description || "").trim(),
+    tags: String(record.tags || "").trim(),
+    classification: allowedClassifications.includes(record.classification) ? record.classification : "public",
+    status: allowedStatuses.includes(record.status) ? record.status : "pending",
+    fileName: String(record.fileName || "no-file").trim(),
+    name: String(record.name || "Unknown").trim(),
+    email: String(record.email || "").trim(),
+    phone: String(record.phone || "").trim(),
+    notes: String(record.notes || "").trim(),
+    createdAt: record.createdAt || new Date().toISOString()
+  };
+}
+
 function getFiles() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(seedFiles));
     return seedFiles;
   }
-  return JSON.parse(raw);
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) throw new Error("Invalid shape");
+    return parsed.map(normalizeFile);
+  } catch {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedFiles));
+    return seedFiles;
+  }
 }
 
 function saveFiles(files) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(files.map(normalizeFile)));
 }
 
 function isAdmin() {
@@ -43,7 +79,7 @@ function setAdminSession(enabled) {
 
 function createFileFromForm(form, forceApproved = false) {
   const data = new FormData(form);
-  return {
+  return normalizeFile({
     id: crypto.randomUUID(),
     title: data.get("title"),
     description: data.get("description"),
@@ -56,15 +92,16 @@ function createFileFromForm(form, forceApproved = false) {
     phone: data.get("phone"),
     notes: data.get("notes"),
     createdAt: new Date().toISOString()
-  };
+  });
 }
 
 function formatDate(iso) {
-  return new Date(iso).toLocaleString();
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? "Unknown" : date.toLocaleString();
 }
 
 function badge(type, value) {
-  return `<span class="badge ${type}-${value}">${value}</span>`;
+  return `<span class="badge ${type}-${esc(value)}">${esc(value)}</span>`;
 }
 
 function renderNav() {

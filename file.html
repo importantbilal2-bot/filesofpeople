@@ -26,7 +26,7 @@
   <footer>Viewer Terminal</footer>
   <script src="app.js"></script>
   <script>
-    const id = new URLSearchParams(location.search).get("id");
+    const id = decodeURIComponent(new URLSearchParams(location.search).get("id") || "");
     const file = getFiles().find((f) => f.id === id);
     const root = document.getElementById("file-view");
 
@@ -36,8 +36,8 @@
       root.innerHTML = `
         <div class="file-layout">
           <div class="panel">
-            <h1>${file.title}</h1>
-            <p>${file.description}</p>
+            <h1>${esc(file.title)}</h1>
+            <p>${esc(file.description)}</p>
             <div class="meta-row">
               ${badge("class", file.classification)}
               ${badge("status", file.status)}
@@ -45,8 +45,8 @@
             <div class="info-card">
               <h3>File Metadata</h3>
               <div class="info-list">
-                <div class="info-item"><strong>Tags</strong><br/>${file.tags || "-"}</div>
-                <div class="info-item"><strong>Attached File</strong><br/>${file.fileName}</div>
+                <div class="info-item"><strong>Tags</strong><br/>${esc(file.tags || "-")}</div>
+                <div class="info-item"><strong>Attached File</strong><br/>${esc(file.fileName)}</div>
                 <div class="info-item"><strong>Submitted</strong><br/>${formatDate(file.createdAt)}</div>
               </div>
             </div>
@@ -55,10 +55,10 @@
           <div class="panel">
             <h2>Investigation Information</h2>
             <div class="info-list">
-              <div class="info-item"><strong>Name</strong><br/>${file.name}</div>
-              <div class="info-item"><strong>Email</strong><br/><a href="mailto:${file.email}">${file.email}</a></div>
-              <div class="info-item"><strong>Phone</strong><br/><a href="tel:${file.phone}">${file.phone}</a></div>
-              <div class="info-item"><strong>Notes</strong><br/>${file.notes}</div>
+              <div class="info-item"><strong>Name</strong><br/>${esc(file.name)}</div>
+              <div class="info-item"><strong>Email</strong><br/><a href="mailto:${encodeURIComponent(file.email)}">${esc(file.email)}</a></div>
+              <div class="info-item"><strong>Phone</strong><br/><a href="tel:${encodeURIComponent(file.phone)}">${esc(file.phone)}</a></div>
+              <div class="info-item"><strong>Notes</strong><br/>${esc(file.notes)}</div>
             </div>
           </div>
         </div>

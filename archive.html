@@ -46,13 +46,13 @@
             </tr>
           </thead>
           <tbody>
-            ${files.map(f => `
+            ${files.map((f) => `
               <tr>
-                <td>${f.title}</td>
-                <td>${f.description}</td>
-                <td>${f.tags}</td>
+                <td>${esc(f.title)}</td>
+                <td>${esc(f.description)}</td>
+                <td>${esc(f.tags)}</td>
                 <td>${badge("class", f.classification)}</td>
-                <td><a href="file.html?id=${f.id}">Open</a></td>
+                <td><a href="file.html?id=${encodeURIComponent(f.id)}">Open</a></td>
               </tr>
             `).join("")}
           </tbody>

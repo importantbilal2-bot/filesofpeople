@@ -77,7 +77,7 @@
           <tbody>
             ${files.map((f) => `
               <tr>
-                <td><a href="file.html?id=${f.id}">${f.title}</a></td>
+                <td><a href="file.html?id=${encodeURIComponent(f.id)}">${esc(f.title)}</a></td>
                 <td>${badge("status", f.status)}</td>
                 <td>${badge("class", f.classification)}</td>
                 <td>${formatDate(f.createdAt)}</td>
@@ -103,12 +103,13 @@
         btn.addEventListener("click", () => {
           const files = getFiles();
           const item = files.find((f) => f.id === btn.dataset.edit);
+          if (!item) return;
           const newTitle = prompt("New title", item.title);
-          if (!newTitle) return;
+          if (!newTitle || !newTitle.trim()) return;
           const newDesc = prompt("New description", item.description);
-          if (!newDesc) return;
-          item.title = newTitle;
-          item.description = newDesc;
+          if (!newDesc || !newDesc.trim()) return;
+          item.title = newTitle.trim();
+          item.description = newDesc.trim();
           saveFiles(files);
           renderManage();
         });

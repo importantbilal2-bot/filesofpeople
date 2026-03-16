@@ -50,15 +50,15 @@
             ${pending.map((f) => `
               <tr>
                 <td>
-                  <strong>${f.title}</strong><br />
-                  <small>${f.description}</small>
+                  <strong>${esc(f.title)}</strong><br />
+                  <small>${esc(f.description)}</small>
                 </td>
-                <td>${f.name}<br/><small>${f.email} | ${f.phone}</small></td>
+                <td>${esc(f.name)}<br/><small>${esc(f.email)} | ${esc(f.phone)}</small></td>
                 <td>${badge("class", f.classification)}</td>
                 <td class="actions">
                   <button class="ok" data-approve="${f.id}">Approve</button>
                   <button class="danger" data-reject="${f.id}">Reject</button>
-                  <a href="file.html?id=${f.id}">Inspect</a>
+                  <a href="file.html?id=${encodeURIComponent(f.id)}">Inspect</a>
                 </td>
               </tr>
             `).join("")}
@@ -70,6 +70,7 @@
         btn.addEventListener("click", () => {
           const files = getFiles();
           const record = files.find((f) => f.id === btn.dataset.approve);
+          if (!record) return;
           record.status = "approved";
           saveFiles(files);
           renderQueue();
