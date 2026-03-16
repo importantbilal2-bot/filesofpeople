@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Admin Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel" style="max-width:480px;margin:auto;">
+      <h1>Administrator Authentication</h1>
+      <p class="muted">Default credentials: bilal / saadiboy</p>
+      <form id="admin-login-form">
+        <label>Username</label><input name="username" required />
+        <label>Password</label><input type="password" name="password" required />
+        <button type="submit">Login</button>
+        <p id="login-msg" class="notice" style="display:none"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>Restricted Access</footer>
+  <script src="app.js"></script>
+  <script>
+    if (isAdmin()) {
+      location.href = "admin-dashboard.html";
+    }
+
+    document.getElementById("admin-login-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(event.target);
+      const msg = document.getElementById("login-msg");
+      msg.style.display = "block";
+      if (data.get("username") === ADMIN_USER && data.get("password") === ADMIN_PASS) {
+        setAdminSession(true);
+        msg.textContent = "Authentication complete. Redirecting...";
+        location.href = "admin-dashboard.html";
+      } else {
+        msg.textContent = "Access denied.";
+      }
+    });
+  </script>
+</body>
+</html>
