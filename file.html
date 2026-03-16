@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | File Viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="file-view"></section>
+  </main>
+
+  <footer>Viewer Terminal</footer>
+  <script src="app.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id");
+    const file = getFiles().find((f) => f.id === id);
+    const root = document.getElementById("file-view");
+
+    if (!file || (file.status !== "approved" && !isAdmin())) {
+      root.innerHTML = '<div class="panel"><h1>File unavailable</h1><p>Record not found or not approved for public access.</p></div>';
+    } else {
+      root.innerHTML = `
+        <div class="file-layout">
+          <div class="panel">
+            <h1>${file.title}</h1>
+            <p>${file.description}</p>
+            <div class="meta-row">
+              ${badge("class", file.classification)}
+              ${badge("status", file.status)}
+            </div>
+            <div class="info-card">
+              <h3>File Metadata</h3>
+              <div class="info-list">
+                <div class="info-item"><strong>Tags</strong><br/>${file.tags || "-"}</div>
+                <div class="info-item"><strong>Attached File</strong><br/>${file.fileName}</div>
+                <div class="info-item"><strong>Submitted</strong><br/>${formatDate(file.createdAt)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Investigation Information</h2>
+            <div class="info-list">
+              <div class="info-item"><strong>Name</strong><br/>${file.name}</div>
+              <div class="info-item"><strong>Email</strong><br/><a href="mailto:${file.email}">${file.email}</a></div>
+              <div class="info-item"><strong>Phone</strong><br/><a href="tel:${file.phone}">${file.phone}</a></div>
+              <div class="info-item"><strong>Notes</strong><br/>${file.notes}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

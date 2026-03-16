@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Archive</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h1>Approved Files Archive</h1>
+      <p class="muted">Only approved files are visible in public archive listings.</p>
+      <div id="archive-list" class="table-wrap"></div>
+    </section>
+  </main>
+
+  <footer>Public Viewport</footer>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const files = getFiles().filter((f) => f.status === "approved");
+      const container = document.getElementById("archive-list");
+      if (!files.length) {
+        container.innerHTML = '<div class="notice">No approved files available.</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th><th>Description</th><th>Tags</th><th>Classification</th><th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${files.map(f => `
+              <tr>
+                <td>${f.title}</td>
+                <td>${f.description}</td>
+                <td>${f.tags}</td>
+                <td>${badge("class", f.classification)}</td>
+                <td><a href="file.html?id=${f.id}">Open</a></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    });
+  </script>
+</body>
+</html>
