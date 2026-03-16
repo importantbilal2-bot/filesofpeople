@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | File Viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="file-view"></section>
+  </main>
+
+  <footer>Viewer Terminal</footer>
+  <script src="app.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id");
+    const file = getFiles().find((f) => f.id === id);
+    const root = document.getElementById("file-view");
+
+    if (!file || (file.status !== "approved" && !isAdmin())) {
+      root.innerHTML = '<div class="panel"><h1>File unavailable</h1><p>Record not found or not approved for public access.</p></div>';
+    } else {
+      root.innerHTML = `
+        <div class="panel">
+          <h1>${file.title}</h1>
+          <p>${file.description}</p>
+          <p>${badge("class", file.classification)} ${badge("status", file.status)}</p>
+          <p><strong>Tags:</strong> ${file.tags}</p>
+          <p><strong>Attached File:</strong> ${file.fileName}</p>
+          <p class="muted">Submitted: ${formatDate(file.createdAt)}</p>
+        </div>
+        <div class="panel">
+          <h2>Investigation Information</h2>
+          <p><strong>Name:</strong> ${file.name}</p>
+          <p><strong>Email:</strong> ${file.email}</p>
+          <p><strong>Phone:</strong> ${file.phone}</p>
+          <p><strong>Notes:</strong> ${file.notes}</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

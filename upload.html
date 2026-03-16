@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Upload</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h1>Submit File (Guest)</h1>
+      <p class="muted">Guest submissions are automatically placed into pending review.</p>
+      <form id="guest-upload-form">
+        <div class="grid">
+          <div>
+            <label>Title</label><input name="title" required />
+            <label>Description</label><textarea name="description" required></textarea>
+            <label>Tags</label><input name="tags" placeholder="comma,separated,tags" />
+            <label>Classification</label>
+            <select name="classification" required>
+              <option value="public">public</option>
+              <option value="confidential">confidential</option>
+              <option value="restricted">restricted</option>
+            </select>
+            <label>Upload file</label><input type="file" name="upload" required />
+          </div>
+          <div>
+            <label>Name</label><input name="name" required />
+            <label>Email</label><input type="email" name="email" required />
+            <label>Phone</label><input name="phone" required />
+            <label>Notes</label><textarea name="notes" required></textarea>
+          </div>
+        </div>
+        <button type="submit">Submit to Review Queue</button>
+        <p id="upload-msg" class="notice" style="display:none"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>Submission Channel: Active</footer>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById("guest-upload-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const files = getFiles();
+      const entry = createFileFromForm(event.target, false);
+      files.push(entry);
+      saveFiles(files);
+      const msg = document.getElementById("upload-msg");
+      msg.style.display = "block";
+      msg.textContent = "File submitted. Status set to pending review.";
+      event.target.reset();
+    });
+  </script>
+</body>
+</html>
