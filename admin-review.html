@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Admin Review</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="admin-dashboard.html">Admin Dashboard</a>
+        <a href="admin-review.html">Review Queue</a>
+        <a href="#" id="logout-btn">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h1>Pending Submissions Review</h1>
+      <p class="muted">Approve to publish in archive or reject to remove from queue.</p>
+      <div id="review-list"></div>
+    </section>
+  </main>
+
+  <footer>Review Queue Interface</footer>
+  <script src="app.js"></script>
+  <script>
+    requireAdmin();
+
+    function renderQueue() {
+      const pending = getFiles().filter((f) => f.status === "pending");
+      const root = document.getElementById("review-list");
+      if (!pending.length) {
+        root.innerHTML = '<div class="notice">No pending uploads.</div>';
+        return;
+      }
+
+      root.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Contact</th><th>Classification</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${pending.map((f) => `
+              <tr>
+                <td>
+                  <strong>${f.title}</strong><br />
+                  <small>${f.description}</small>
+                </td>
+                <td>${f.name}<br/><small>${f.email} | ${f.phone}</small></td>
+                <td>${badge("class", f.classification)}</td>
+                <td class="actions">
+                  <button class="ok" data-approve="${f.id}">Approve</button>
+                  <button class="danger" data-reject="${f.id}">Reject</button>
+                  <a href="file.html?id=${f.id}">Inspect</a>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      root.querySelectorAll("button[data-approve]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const files = getFiles();
+          const record = files.find((f) => f.id === btn.dataset.approve);
+          record.status = "approved";
+          saveFiles(files);
+          renderQueue();
+        });
+      });
+
+      root.querySelectorAll("button[data-reject]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const files = getFiles().filter((f) => f.id !== btn.dataset.reject);
+          saveFiles(files);
+          renderQueue();
+        });
+      });
+    }
+
+    renderQueue();
+  </script>
+</body>
+</html>

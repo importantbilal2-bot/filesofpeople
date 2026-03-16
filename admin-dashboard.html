@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="admin-dashboard.html">Admin Dashboard</a>
+        <a href="admin-review.html">Review Queue</a>
+        <a href="#" id="logout-btn">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h1>Admin Dashboard</h1>
+      <p class="muted">Upload files directly (auto-approved) and manage existing records.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Direct Upload</h2>
+      <form id="admin-upload-form">
+        <div class="grid">
+          <div>
+            <label>Title</label><input name="title" required />
+            <label>Description</label><textarea name="description" required></textarea>
+            <label>Tags</label><input name="tags" />
+            <label>Classification</label>
+            <select name="classification" required>
+              <option value="public">public</option>
+              <option value="confidential">confidential</option>
+              <option value="restricted">restricted</option>
+            </select>
+            <label>Upload file</label><input type="file" name="upload" required />
+          </div>
+          <div>
+            <label>Name</label><input name="name" required />
+            <label>Email</label><input type="email" name="email" required />
+            <label>Phone</label><input name="phone" required />
+            <label>Notes</label><textarea name="notes" required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="ok">Upload & Approve</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Manage Files</h2>
+      <div id="manage-table" class="table-wrap"></div>
+    </section>
+  </main>
+
+  <footer>Administrative Channel</footer>
+  <script src="app.js"></script>
+  <script>
+    requireAdmin();
+
+    function renderManage() {
+      const files = getFiles();
+      const holder = document.getElementById("manage-table");
+      holder.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th><th>Status</th><th>Classification</th><th>Submitted</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${files.map((f) => `
+              <tr>
+                <td><a href="file.html?id=${f.id}">${f.title}</a></td>
+                <td>${badge("status", f.status)}</td>
+                <td>${badge("class", f.classification)}</td>
+                <td>${formatDate(f.createdAt)}</td>
+                <td class="actions">
+                  <button data-edit="${f.id}" class="warn">Edit</button>
+                  <button data-delete="${f.id}" class="danger">Delete</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      holder.querySelectorAll("button[data-delete]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const filtered = getFiles().filter((f) => f.id !== btn.dataset.delete);
+          saveFiles(filtered);
+          renderManage();
+        });
+      });
+
+      holder.querySelectorAll("button[data-edit]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const files = getFiles();
+          const item = files.find((f) => f.id === btn.dataset.edit);
+          const newTitle = prompt("New title", item.title);
+          if (!newTitle) return;
+          const newDesc = prompt("New description", item.description);
+          if (!newDesc) return;
+          item.title = newTitle;
+          item.description = newDesc;
+          saveFiles(files);
+          renderManage();
+        });
+      });
+    }
+
+    document.getElementById("admin-upload-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const files = getFiles();
+      files.push(createFileFromForm(event.target, true));
+      saveFiles(files);
+      event.target.reset();
+      renderManage();
+    });
+
+    renderManage();
+  </script>
+</body>
+</html>

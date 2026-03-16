@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classified Database | Home</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand">CLASSIFIED DATABASE</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="upload.html">Upload</a>
+        <a href="admin-login.html">Admin Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h1>Public Investigation Archive</h1>
+      <p class="muted">Access approved public dossiers, submit new files for review, and manage submissions through the admin command interface.</p>
+      <div class="grid">
+        <div class="panel">
+          <h3>Guest Access</h3>
+          <p>View approved files and submit intelligence records to the pending review queue.</p>
+          <a href="archive.html">Browse Archive →</a>
+        </div>
+        <div class="panel">
+          <h3>Admin Control</h3>
+          <p>Authenticate to review, approve, reject, edit, delete, and directly publish entries.</p>
+          <a href="admin-login.html">Open Admin Login →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Data Schema</h2>
+      <div class="grid">
+        <div>
+          <h3>Investigation Fields</h3>
+          <ul>
+            <li>Name</li>
+            <li>Email</li>
+            <li>Phone Number</li>
+            <li>Notes</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Metadata</h3>
+          <ul>
+            <li>Title & Description</li>
+            <li>Tags</li>
+            <li>Classification (public / confidential / restricted)</li>
+            <li>Status (pending / approved)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>System Status: Monitoring</footer>
+  <script src="app.js"></script>
+</body>
+</html>
